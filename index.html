@@ -1,15 +1,29 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Ohio Trading & Exchange Co.</title>
   <link rel="stylesheet" href="style.css">
-  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Share+Tech+Mono&family=VT323&display=swap"
+    rel="stylesheet">
 </head>
+
 <body>
+  <!-- Scan line overlay for cyberpunk effect -->
+  <div class="scanlines"></div>
+
   <!-- Particles -->
   <div id="particles"></div>
+
+  <!-- Mobile Menu Toggle -->
+  <button class="mobile-menu-toggle" aria-label="Toggle menu">
+    <span></span>
+    <span></span>
+    <span></span>
+  </button>
 
   <!-- Flickering logo -->
   <header class="header">
@@ -18,10 +32,12 @@
   </header>
 
   <!-- Navigation -->
-  <nav class="nav">
-    <button class="nav-btn active" data-page="vault">VAULT</button>
-    <button class="nav-btn" data-page="calc">TRADE CALCULATOR</button>
-  </nav>
+  <div class="nav-container">
+    <nav class="nav">
+      <button class="nav-btn active" data-page="vault">VAULT</button>
+      <button class="nav-btn" data-page="calc">TRADE CALCULATOR</button>
+    </nav>
+  </div>
 
   <!-- Vault Page -->
   <section id="vault" class="page active">
@@ -75,7 +91,7 @@
     });
 
     // Group skins
-    const order = ["Invisible","Obsidian","Dark Matter","Anti Matter","Crimson Bloods","Void Reapers","Underworld","White Ghost","Solid Gold","Gift Wrapped","Christmas Future","Golden Snow","Frozen Gold","Sub Zero","Rainbow Firework","Solid Gold V2","St Patrick","Holy Fire","Bloody Heart","Fallout","Atomic Pumpkin","Ethereal","Spectral","Balloon"];
+    const order = ["Invisible", "Obsidian", "Dark Matter", "Anti Matter", "Crimson Bloods", "Void Reapers", "Underworld", "White Ghost", "Solid Gold", "Gift Wrapped", "Christmas Future", "Golden Snow", "Frozen Gold", "Sub Zero", "Rainbow Firework", "Solid Gold V2", "St Patrick", "Holy Fire", "Bloody Heart", "Fallout", "Atomic Pumpkin", "Ethereal", "Spectral", "Balloon"];
 
     function groupSkins(skins) {
       const groups = order.map(category => ({
@@ -94,8 +110,8 @@
 
     function format(v) {
       if (v === 0) return "Unrated";
-      if (v >= 1000000) return "$" + (v/1000000).toFixed(1) + "M";
-      if (v >= 1000) return "$" + Math.floor(v/1000) + "K";
+      if (v >= 1000000) return "$" + (v / 1000000).toFixed(1) + "M";
+      if (v >= 1000) return "$" + Math.floor(v / 1000) + "K";
       return "$" + v;
     }
 
@@ -111,7 +127,7 @@
           <div class="card animate">
             <div class="name">${s.name}</div>
             <div class="value">${format(s.worth)}</div>
-            <div class="demand">DEMAND: ${s.demand === "?" ? "???" : s.demand+"/10"}</div>
+            <div class="demand">DEMAND: ${s.demand === "?" ? "???" : s.demand + "/10"}</div>
           </div>
         `).join("");
 
@@ -140,41 +156,41 @@
     const receiveTotal = document.getElementById("receive-total");
     const verdict = document.getElementById("verdict");
 
-    function showDropdown(input, dropdown){
+    function showDropdown(input, dropdown) {
       const val = input.value.toLowerCase();
-      if(!val){ dropdown.innerHTML=""; dropdown.style.display="none"; return; }
-      const matches = skins.filter(s => s.name.toLowerCase().includes(val)).slice(0,8);
+      if (!val) { dropdown.innerHTML = ""; dropdown.style.display = "none"; return; }
+      const matches = skins.filter(s => s.name.toLowerCase().includes(val)).slice(0, 8);
       dropdown.innerHTML = matches.map(s => `<div class="option" data-name="${s.name}" data-worth="${s.worth}">${s.name} <span>(${format(s.worth)})</span></div>`).join("");
       dropdown.style.display = matches.length ? "block" : "none";
     }
 
-    function addSkin(name, worth, container){
+    function addSkin(name, worth, container) {
       const div = document.createElement("div");
-      div.className="trade-item";
+      div.className = "trade-item";
       div.innerHTML = `<span>${name}</span><span>${format(worth)}</span><button>×</button>`;
-      div.querySelector("button").onclick = ()=>{ div.remove(); update(); };
+      div.querySelector("button").onclick = () => { div.remove(); update(); };
       container.appendChild(div);
       update();
     }
 
-    [giveInput, receiveInput].forEach(input=>{
+    [giveInput, receiveInput].forEach(input => {
       const dropdown = input.id.includes("give") ? giveDropdown : receiveDropdown;
-      input.addEventListener("input", ()=>showDropdown(input, dropdown));
-      input.addEventListener("keydown", e=>{
-        if(e.key==="Enter" && input.value){
-          const match = skins.find(s=>s.name.toLowerCase()===input.value.toLowerCase());
-          if(match){
+      input.addEventListener("input", () => showDropdown(input, dropdown));
+      input.addEventListener("keydown", e => {
+        if (e.key === "Enter" && input.value) {
+          const match = skins.find(s => s.name.toLowerCase() === input.value.toLowerCase());
+          if (match) {
             addSkin(match.name, match.worth, input.id.includes("give") ? giveItems : receiveItems);
-            input.value="";
-            dropdown.innerHTML="";
-            dropdown.style.display="none";
+            input.value = "";
+            dropdown.innerHTML = "";
+            dropdown.style.display = "none";
           }
         }
       });
     });
 
-    document.addEventListener("click", e=>{
-      if(e.target.classList.contains("option")){
+    document.addEventListener("click", e => {
+      if (e.target.classList.contains("option")) {
         const name = e.target.dataset.name;
         const worth = parseInt(e.target.dataset.worth);
         const container = e.target.closest(".input-wrapper").previousElementSibling;
@@ -185,57 +201,78 @@
       }
     });
 
-    function getTotal(container){
-      return Array.from(container.children).reduce((sum, el)=>{
+    function getTotal(container) {
+      return Array.from(container.children).reduce((sum, el) => {
         const val = el.children[1].textContent;
-        if(val==="Unrated") return sum;
-        const n = parseFloat(val.replace(/[$,MK]/g,""));
-        return sum + (val.includes("M")?n*1000000: val.includes("K")?n*1000:n);
-      },0);
+        if (val === "Unrated") return sum;
+        const n = parseFloat(val.replace(/[$,MK]/g, ""));
+        return sum + (val.includes("M") ? n * 1000000 : val.includes("K") ? n * 1000 : n);
+      }, 0);
     }
 
-    function update(){
+    function update() {
       const give = getTotal(giveItems);
       const receive = getTotal(receiveItems);
       giveTotal.textContent = format(give);
       receiveTotal.textContent = format(receive);
 
-      if(give + receive === 0){
-        verdict.textContent="—";
-        verdict.style.color="#666";
+      if (give + receive === 0) {
+        verdict.textContent = "—";
+        verdict.style.color = "#666";
         return;
       }
 
-      const pct = give===0 ? 999 : ((receive-give)/give)*100;
+      const pct = give === 0 ? 999 : ((receive - give) / give) * 100;
       let msg, color;
       let cashDiff = receive - give;
       let sign = cashDiff >= 0 ? "+" : "-";
       let formattedCashDiff = format(Math.abs(cashDiff));
 
-      if(Math.abs(pct)<=12){ msg=`FAIR TRADE (${sign}${formattedCashDiff})`; color="#fff"; }
-      else if(pct>12){ msg=`WIN +${pct.toFixed(0)}% (${sign}${formattedCashDiff})`; color="#0f0"; }
-      else if(pct>-35){ msg=`SLIGHT L (${sign}${formattedCashDiff})`; color="#ff0"; }
-      else{ msg=`SCAM / BAD (${sign}${formattedCashDiff})`; color="#f00"; }
+      if (Math.abs(pct) <= 12) { msg = `FAIR TRADE (${sign}${formattedCashDiff})`; color = "#fff"; }
+      else if (pct > 12) { msg = `WIN +${pct.toFixed(0)}% (${sign}${formattedCashDiff})`; color = "#0f0"; }
+      else if (pct > -35) { msg = `SLIGHT L (${sign}${formattedCashDiff})`; color = "#ff0"; }
+      else { msg = `SCAM / BAD (${sign}${formattedCashDiff})`; color = "#f00"; }
 
-      verdict.textContent=msg;
-      verdict.style.color=color;
-      verdict.style.textShadow=`0 0 20px ${color}`;
+      verdict.textContent = msg;
+      verdict.style.color = color;
+      verdict.style.textShadow = `0 0 20px ${color}`;
     }
 
     // Particle system
     const particles = document.getElementById("particles");
-    for(let i=0;i<80;i++){
-      const p=document.createElement("div");
-      p.className="particle";
-      p.style.left=Math.random()*100+"vw";
-      let size = 1 + Math.random()*2;
+    for (let i = 0; i < 80; i++) {
+      const p = document.createElement("div");
+      p.className = "particle";
+      p.style.left = Math.random() * 100 + "vw";
+      let size = 1 + Math.random() * 2;
       p.style.width = size + "px";
       p.style.height = size + "px";
-      p.style.opacity = 0.2 + Math.random()*0.8;
-      p.style.animationDelay = Math.random()*5 + "s";
-      p.style.animationDuration = 5 + Math.random()*5 + "s";
+      p.style.opacity = 0.2 + Math.random() * 0.8;
+      p.style.animationDelay = Math.random() * 5 + "s";
+      p.style.animationDuration = 5 + Math.random() * 5 + "s";
       particles.appendChild(p);
+    }
+
+    // Mobile menu toggle
+    const mobileMenuToggle = document.querySelector('.mobile-menu-toggle');
+    const navContainer = document.querySelector('.nav-container');
+
+    if (mobileMenuToggle && navContainer) {
+      mobileMenuToggle.addEventListener('click', () => {
+        mobileMenuToggle.classList.toggle('active');
+        navContainer.classList.toggle('active');
+      });
+
+      // Close mobile menu when navigation button is clicked
+      document.querySelectorAll('.nav-btn').forEach(btn => {
+        const originalClickHandler = btn.onclick;
+        btn.addEventListener('click', () => {
+          mobileMenuToggle.classList.remove('active');
+          navContainer.classList.remove('active');
+        });
+      });
     }
   </script>
 </body>
+
 </html>
